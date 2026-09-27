@@ -24,6 +24,7 @@ class CityRepository {
 
             snapshot?.documents?.forEach { document ->
                 val city: City? = document.toObject(City::class.java)
+                city!!.id = document.id
                 if (city != null) {
                     _cities.add(city)
                 }
@@ -35,14 +36,17 @@ class CityRepository {
         get() = _cities
 
     fun addCity(city: City) {
-        citiesRef.document(city.name).set(city)
+        val newDocRef = citiesRef.document()
+        val cityWithId = city.copy(id = newDocRef.id)
+        newDocRef.set(cityWithId)
     }
 
     fun updateCity(oldCity: City, updatedCity: City) {
-        citiesRef.document(oldCity.name).set(updatedCity)
+        addCity(updatedCity)
+        delCity(oldCity)
     }
 
     fun delCity(city:City) {
-        citiesRef.document(city.name).delete()
+        citiesRef.document(city.id).delete()
     }
 }

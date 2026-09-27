@@ -32,6 +32,7 @@ fun CityListScreen(
     cities: List<City>,
     onAddCity: (City) -> Unit,
     onUpdateCity: (City, City) -> Unit,
+    onDeleteCity: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var newCityName by remember { mutableStateOf("") }
@@ -42,22 +43,24 @@ fun CityListScreen(
     var editedProvinceName by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            FloatingActionButton(
-                modifier = Modifier.padding(16.dp),
-                onClick = {
-                    showAddCityFields = !showAddCityFields
-                    if (showAddCityFields) {
-                        selectedCity = null
-                        editedCityName = ""
-                        editedProvinceName = ""
-                    }
-                }
+        if (selectedCity == null) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                Text("+")
+                FloatingActionButton(
+                    modifier = Modifier.padding(16.dp),
+                    onClick = {
+                        showAddCityFields = !showAddCityFields
+                        if (showAddCityFields) {
+                            selectedCity = null
+                            editedCityName = ""
+                            editedProvinceName = ""
+                        }
+                    }
+                ) {
+                    Text("+")
+                }
             }
         }
         if (showAddCityFields) {
@@ -110,24 +113,6 @@ fun CityListScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                OutlinedTextField(
-                    value = editedCityName,
-                    onValueChange = { editedCityName = it },
-                    label = { Text("Updated City") },
-                    modifier = Modifier.weight(1f)
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                OutlinedTextField(
-                    value = editedProvinceName,
-                    onValueChange = { editedProvinceName = it },
-                    label = { Text("Updated Province") },
-                    modifier = Modifier.weight(1f)
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
                 Button(
                     modifier = Modifier.padding(vertical = 12.dp),
                     onClick = {
@@ -153,6 +138,49 @@ fun CityListScreen(
                 ) {
                     Text("UPDATE CITY")
                 }
+                Button(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    onClick = {
+                            onDeleteCity(selectedCity!!)
+                            selectedCity = null
+                            editedCityName = ""
+                            editedProvinceName = ""
+                    }
+                ) {
+                    Text("DELETE CITY")
+                }
+                Button(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    onClick = {
+                            selectedCity = null
+                            editedCityName = ""
+                            editedProvinceName = ""
+                    }
+                ) {
+
+                    Text("X")
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = editedCityName,
+                    onValueChange = { editedCityName = it },
+                    label = { Text("Updated City") },
+                    modifier = Modifier.weight(1f)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                OutlinedTextField(
+                    value = editedProvinceName,
+                    onValueChange = { editedProvinceName = it },
+                    label = { Text("Updated Province") },
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
         LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -213,7 +241,8 @@ fun CityListScreenPreview() {
                 City("Calgary", "AB")
             ),
             onAddCity = {},
-            onUpdateCity = { _, _ -> }
+            onUpdateCity = { _, _ -> },
+            onDeleteCity = {}
         )
     }
 }
